@@ -44,4 +44,7 @@
     <string name="quick_settings_tiles_default" translatable="false">
         wifi,bt,dnd,flashlight,rotation,battery,cell,airplane,night
     </string>
+
+    <!-- CPUInfoService temperature sysfs path -->
+    <string name="config_cpuinfoSysTemp" translatable="false">/sys/class/thermal/thermal_zone11/temp</string>
 </resources>

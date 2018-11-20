@@ -1,0 +1,93 @@
+on late-fs
+    # boot time fs tune
+    write /sys/block/sda/queue/iostats 0
+    write /sys/block/sda/queue/scheduler maple
+    write /sys/block/sda/queue/iosched/slice_idle 0
+    write /sys/block/sda/queue/read_ahead_kb 2048
+    write /sys/block/sda/queue/nr_requests 256
+    write /sys/block/dm-0/queue/read_ahead_kb 2048
+    write /sys/block/dm-1/queue/read_ahead_kb 2048
+
+on early-boot
+    # Vibrator permissions
+    chown system system /sys/class/timed_output/vibrator/voltage_level
+    chmod 0664 /sys/class/timed_output/vibrator/voltage_level
+
+    # msm-thermal permissions
+    chown system system /sys/module/msm_thermal/parameters/enabled
+    chmod 0664 /sys/module/msm_thermal/parameters/enabled
+
+    # Set schedutil permissions
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu1/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu3/cpufreq/schedutil/up_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu3/cpufreq/schedutil/up_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu1/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu3/cpufreq/schedutil/down_rate_limit_us
+    chmod 0664 /sys/devices/system/cpu/cpu3/cpufreq/schedutil/down_rate_limit_us
+    chown system system /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable
+    chown system system /sys/devices/system/cpu/cpu1/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu1/cpufreq/schedutil/iowait_boost_enable
+    chown system system /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable
+    chown system system /sys/devices/system/cpu/cpu3/cpufreq/schedutil/iowait_boost_enable
+    chmod 0664 /sys/devices/system/cpu/cpu3/cpufreq/schedutil/iowait_boost_enable
+
+on boot
+    # Set cache pressure
+    write /proc/sys/vm/vfs_cache_pressure 10
+
+    # LITTLE cores mix/max freq
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 307200
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 1593600
+
+    # big. cores mix/max freq
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_min_freq 307200
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_max_freq 2150400
+
+    # LITTLE cores governor settings
+    write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor schedutil
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 500
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 20000
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/iowait_boost_enable 1
+
+    # big. cores governor settings
+    write /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor schedutil
+    write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/up_rate_limit_us 500
+    write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/down_rate_limit_us 20000
+    write /sys/devices/system/cpu/cpu2/cpufreq/schedutil/iowait_boost_enable 1
+
+    # CDG congestion control
+    write /proc/sys/net/ipv4/tcp_congestion_control cdg
+
+    # Vibrations
+    write /sys/class/timed_output/vibrator/vmax_light_mv 3596
+    write /sys/class/timed_output/vibrator/vmax_strong_mv 3596
+    write /sys/android_touch/vib_strength 60
+
+    # Power efficient workqueue
+    chmod 0644 /sys/module/workqueue/parameters/power_efficient
+    write /sys/module/workqueue/parameters/power_efficient Y
+
+    # Hi-perf audio
+    write /sys/module/snd_soc_wcd9330/parameters/high_perf_mode 1
+
+    # Backlight dimmer
+    write /sys/module/mdss_fb/parameters/backlight_dimmer 1
+
+    # USB Fastcharge
+    write /sys/kernel/fast_charge/force_fast_charge 1
+
+on property:sys.boot_completed=1
+    # msm_thermal
+    write /sys/module/msm_thermal/parameters/enabled 1
